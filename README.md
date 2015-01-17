@@ -1,7 +1,7 @@
 AutoItDriverServer
 =========
 
-AutoItDriverServer is a server interface wrapper to AutoIt that provides a Selenium WebDriver API via the webdriver JSON  wire protocol to drive AutoIt (using AutoItX COM/DLL API). 
+AutoItDriverServer is a server interface wrapper to [AutoIt](https://www.autoitscript.com) that provides a Selenium WebDriver API via the webdriver JSON  wire protocol to drive AutoIt (using AutoItX COM/DLL API). 
 
 There are 3 benefits to testing with AutoItDriverServer:
 
@@ -16,7 +16,7 @@ Quick Start & server/implementation notes
 
 The server is currently implemented in Python, calling AutoItX over COM (or optionally/alternatively DLL). There is a plan to do a .NET/C# version that is more standalone than Python in the future. Both implementations have the goal of working with all off the shelf Selenium client libraries.
 
-Python implementation is adapted from the old Appium server Python implementation (https://github.com/hugs/appium-old), and uses the [Bottle micro web-framework](http://www.bottlepy.org). The .NET/C# implementation will be adapted from Strontium server (https://github.com/jimevans/strontium).
+Python implementation is adapted from the [old Appium server Python implementation](https://github.com/hugs/appium-old), and uses the [Bottle micro web-framework](http://www.bottlepy.org). The .NET/C# implementation will be adapted from [Strontium server](https://github.com/jimevans/strontium).
 
 To get started, clone the repo:<br />
 `git clone git://github.com/daluu/AutoItDriverServer`
