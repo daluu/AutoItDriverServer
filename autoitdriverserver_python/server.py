@@ -56,7 +56,6 @@ def get_platform():
 
 @app.route('/wd/hub/status', method='GET')
 def status():
-    wd_platform = get_platform()
     status = {'sessionId': app.SESSION_ID if app.started else None,
               'status': 0,
               'value': {'build': {'version': 'AutoItDriverServer 0.1'}, 
@@ -161,26 +160,34 @@ def delete_session(session_id=''):
 
 @app.route('/wd/hub/session/<session_id>/execute', method='POST')
 def execute_script(session_id=''):
-    status = 0
-    result = ''
     request_data = request.body.read()
     try:
         script = json.loads(request_data).get('script')
-        #args = json.loads(request_data).get('args')
-        #script_with_args = [script]
-        #script_with_args.extend(args)
-        #result = subprocess.check_output(script, stderr=subprocess.STDOUT)
-        #result = subprocess.check_output(script_with_args, stderr=subprocess.STDOUT)
-        proc_handle = os.popen(script)
-        result = proc_handle.read()
-        proc_handle.close()
+        args = json.loads(request_data).get('args')
+
+        if config.get("AutoIt Options",'AutoItScriptExecuteScriptAsCompiledBinary') == "False":
+            if platform.machine() == "AMD64":
+                if config.get("AutoIt Options",'AutoIt64BitOSOnInstallUse32Bit') == "True":
+                    au3Runner = config.get("AutoIt Options",'AutoIt64BitOS32BitExecutablePath')
+                else:
+                    au3Runner = config.get("AutoIt Options",'AutoIt64BitOS64BitExecutablePath')
+            else: # platform.machine() == "i386"
+                au3Runner = config.get("AutoIt Options",'AutoIt32BitExecutablePath')
+            script_call = "%s %s" % (au3Runner,script)
+        else:
+            script_call = script
+        if args is not None:
+            for arg in args:
+                script_call = "%s %s" % (script_call,arg)
+        print "script2exec: %s" % script_call
+        os.system(script_call)
     except:
         response.status = 400
-        return {'sessionId': session_id, 'status': 13, 'value': str(sys.exc_info()[0])}
+        return {'sessionId': session_id, 'status': 13, 'value': str(sys.exc_info()[1])}
 
     app_response = {'sessionId': session_id,
-        'status': status,
-        'value': result}
+        'status': 0,
+        'value': {}}
     return app_response
 
 @app.route('/wd/hub/session/<session_id>/element/<element_id>/click', method='POST')
@@ -389,7 +396,6 @@ def find_element(session_id=''):
 
 def _find_element(session_id, context, many=False):
     try:
-        # TODO: need to support more locator_strategy's
         json_request_data = json.loads(request.body.read())
         locator_strategy = json_request_data.get('using')
         value = json_request_data.get('value')
