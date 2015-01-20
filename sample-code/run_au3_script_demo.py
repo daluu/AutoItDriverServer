@@ -8,11 +8,11 @@ print ""
 
 # execute an AutoIt script file (rather than call specific AutoItX API commands)
 # supply path to AutoIt script file followed by optional arguments
-driver.execute_script("C:\\PathTo\\demo.au3","hello","world")
+driver.execute_script("C:\\PathOnAutoItDriverServerHostMachineTo\\demo.au3","Hello","World")
 
 # or if using compiled binary option 
 # (but need to set AutoItScriptExecuteScriptAsCompiledBinary to True in autoit_options.cfg first
 # before starting the server).
-#driver.execute_script("C:\\PathTo\\demo.exe","hello","world")
+#driver.execute_script("C:\\PathOnAutoItDriverServerHostMachineTo\\demo.exe","Hello","World")
 
 driver.quit()
