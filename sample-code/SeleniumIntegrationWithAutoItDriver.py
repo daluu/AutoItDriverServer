@@ -28,7 +28,7 @@ time.sleep(5)
 # now check img is authenticated or changed
 img_src = wd.find_element_by_id("downloadImg").get_attribute("src")
 if img_src.endswith("/images/spacer.gif"):
-	print "HTTP demo failed, image didn't authenticate/change after logging ing"
+	print "HTTP demo failed, image didn't authenticate/change after logging in."
 
 ### file upload demo, also adapted from sample code of the test/target site ###
 wd.get("http://www.toolsqa.com/automation-practice-form")
