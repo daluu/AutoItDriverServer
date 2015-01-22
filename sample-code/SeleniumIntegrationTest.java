@@ -65,7 +65,7 @@ public class SeleniumIntegrationTest {
 		Thread.sleep(5000);
 		
 		// execute an AutoIt script from WebDriver
-		//((JavascriptExecutor) webDriver).executeScript("C:\\PathOnAutoItDriverServerHostMachineTo\\demo.au3","Hello","World");
+		((JavascriptExecutor) autoitDriver).executeScript("C:\\PathOnAutoItDriverServerHostMachineTo\\demo.au3","Hello","World");
 	}
 
 }

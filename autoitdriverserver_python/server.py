@@ -166,12 +166,12 @@ def execute_script(session_id=''):
         args = json.loads(request_data).get('args')
 
         if config.get("AutoIt Options",'AutoItScriptExecuteScriptAsCompiledBinary') == "False":
-            if platform.machine() == "AMD64":
+            if platform.machine() == "AMD64": # or "x86_64"?
                 if config.get("AutoIt Options",'AutoIt64BitOSOnInstallUse32Bit') == "True":
                     au3Runner = config.get("AutoIt Options",'AutoIt64BitOS32BitExecutablePath')
                 else:
                     au3Runner = config.get("AutoIt Options",'AutoIt64BitOS64BitExecutablePath')
-            else: # platform.machine() == "i386"
+            else: # platform.machine() == "i386" or "x86"
                 au3Runner = config.get("AutoIt Options",'AutoIt32BitExecutablePath')
             script_call = "%s %s" % (au3Runner,script)
         else:
