@@ -38,7 +38,7 @@ Example WebDriver API/client test usage against this server tool can be found in
 NOTES/Caveats
 -------------
 
-AutoItDriverServer is simply a WebDriver server interface to AutoIt. Issues you experience may usually be the result of an issue with AutoIt rather than AutoItDriverServer itself. It would be wise to test your issue/scenario using AutoIt (via native AutoIt script compiled to executable or not) or AutoItX to confirm whether the issue is with AutoIt or AutoItDriverServer. The source code of AutoItDriverServer will point you to the appropriate AutoItX API or see the wiki documentation here.
+AutoItDriverServer is simply a WebDriver server interface to AutoIt. Issues you experience may usually be the result of an issue with AutoIt rather than AutoItDriverServer itself. It would be wise to test your issue/scenario using AutoIt (via native AutoIt script compiled to executable or not) or AutoItX to confirm whether the issue is with AutoIt or AutoItDriverServer. The source code of AutoItDriverServer will point you to the appropriate AutoItX API or see the wiki documentation [here](https://github.com/daluu/AutoItDriverServer/wiki/WebDriver-API-command-support-and-mapping-to-AutoItX-API) and [here](https://github.com/daluu/AutoItDriverServer/wiki/Debugging-tests-and-issues-regarding-AutoIt-and-AutoItDriverServer).
 
 WebDriver API/command support and mapping to AutoItX API
 -------------------------------------------------------
