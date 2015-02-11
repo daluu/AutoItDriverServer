@@ -20,21 +20,26 @@
 #    specific language governing permissions and limitations
 #    under the License.
 
+from __future__ import print_function
 from bottle import Bottle, request, response, redirect
 from bottle import run, static_file
-import ConfigParser
 import json
 import socket
 import sys
 import platform
 import os
 import subprocess
+import tempfile
 import base64
 import urllib
 #import autoit
 import win32com.client
 from time import time
 from time import sleep
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 
 app = Bottle()
 
@@ -68,7 +73,7 @@ def create_session():
 
     #process desired capabilities
     request_data = request.body.read()
-    dc = json.loads(request_data).get('desiredCapabilities')
+    dc = json.loads(request_data.decode()).get('desiredCapabilities')
     if dc is not None:
         app.caretCoordMode = dc.get('caretCoordMode') if dc.get('caretCoordMode') is not None else app.caretCoordMode
         app.expandEnvStrings = dc.get('expandEnvStrings') if dc.get('expandEnvStrings') is not None else app.expandEnvStrings
@@ -162,16 +167,16 @@ def delete_session(session_id=''):
 def execute_script(session_id=''):
     request_data = request.body.read()
     try:
-        script = json.loads(request_data).get('script')
-        args = json.loads(request_data).get('args')
+        script = json.loads(request_data.decode()).get('script')
+        args = json.loads(request_data.decode()).get('args')
 
         if config.get("AutoIt Options",'AutoItScriptExecuteScriptAsCompiledBinary') == "False":
-            if platform.machine() == "AMD64": # or "x86_64"?
+            if platform.machine() == "AMD64":
                 if config.get("AutoIt Options",'AutoIt64BitOSOnInstallUse32Bit') == "True":
                     au3Runner = config.get("AutoIt Options",'AutoIt64BitOS32BitExecutablePath')
                 else:
                     au3Runner = config.get("AutoIt Options",'AutoIt64BitOS64BitExecutablePath')
-            else: # platform.machine() == "i386" or "x86"
+            else: # platform.machine() == "i386"
                 au3Runner = config.get("AutoIt Options",'AutoIt32BitExecutablePath')
             script_call = "%s %s" % (au3Runner,script)
         else:
@@ -179,7 +184,7 @@ def execute_script(session_id=''):
         if args is not None:
             for arg in args:
                 script_call = "%s %s" % (script_call,arg)
-        print "script2exec: %s" % script_call
+        print("script2exec: ",script_call)
         os.system(script_call)
     except:
         response.status = 400
@@ -213,7 +218,7 @@ def mouse_click(session_id=''):
     if request_data == None or request_data == '' or request_data == "{}":
         button = 0
     else:
-        button = json.loads(request_data).get('button')
+        button = json.loads(request_data.decode()).get('button')
     try:
         if button == 1:
             btn_type = "middle"
@@ -255,7 +260,7 @@ def mouse_up(session_id=''):
     if request_data == None or request_data == '' or request_data == "{}":
         button = 0
     else:
-        button = json.loads(request_data).get('button')
+        button = json.loads(request_data.decode()).get('button')
     try:
         if button == 1:
             btn_type = "middle"
@@ -280,7 +285,7 @@ def mouse_down(session_id=''):
     if request_data == None or request_data == '' or request_data == "{}":
         button = 0
     else:
-        button = json.loads(request_data).get('button')
+        button = json.loads(request_data.decode()).get('button')
     try:
         if button == 1:
             btn_type = "middle"
@@ -307,9 +312,9 @@ def move_to(session_id=''):
         xoffset = None
         yoffset = None
     else:
-        element_id = json.loads(request_data).get('element')
-        xoffset = json.loads(request_data).get('xoffset')
-        yoffset = json.loads(request_data).get('yoffset')
+        element_id = json.loads(request_data.decode()).get('element')
+        xoffset = json.loads(request_data.decode()).get('xoffset')
+        yoffset = json.loads(request_data.decode()).get('yoffset')
     try:
         if element_id == None and (xoffset != None or yoffset != None):
             #src = autoit.mouse_get_pos()            
@@ -353,7 +358,7 @@ def move_to(session_id=''):
 def set_value(session_id='', element_id=''):
     request_data = request.body.read()
     try:
-        value_to_set = json.loads(request_data).get('value')
+        value_to_set = json.loads(request_data.decode()).get('value')
         value_to_set = ''.join(value_to_set)
         control_id = decode_value_from_wire(element_id)
         #result = autoit.control_set_text("[active]",control_id,value_to_set)
@@ -396,7 +401,7 @@ def find_element(session_id=''):
 
 def _find_element(session_id, context, many=False):
     try:
-        json_request_data = json.loads(request.body.read())
+        json_request_data = json.loads(request.body.read().decode())
         locator_strategy = json_request_data.get('using')
         value = json_request_data.get('value')
 
@@ -430,7 +435,7 @@ def _find_element(session_id, context, many=False):
 def keys(session_id=''):
     try:
         request_data = request.body.read()
-        wired_keys = json.loads(request_data).get('value')
+        wired_keys = json.loads(request_data.decode()).get('value')
         keys = "".join(wired_keys)
         #autoit.send(keys)
         app.oAutoItX.Send(keys)
@@ -609,7 +614,7 @@ def get_current_window_handle(session_id=''):
 def select_window(session_id=''):
     request_data = request.body.read()
     try:
-        win_name_or_handle = json.loads(request_data).get('name')
+        win_name_or_handle = json.loads(request_data.decode()).get('name')
         #try:
             #autoit.win_activate_by_handle(win_name_or_handle)
         #except:
@@ -642,8 +647,8 @@ def close_window(session_id=''):
 def resize_window(session_id='', window_handle=''):
     try:
         request_data = request.body.read()
-        width = json.loads(request_data).get('width')
-        height = json.loads(request_data).get('height')
+        width = json.loads(request_data.decode()).get('width')
+        height = json.loads(request_data.decode()).get('height')
 
         if window_handle == "current":
             window = "[active]"
@@ -703,8 +708,8 @@ def get_window_size(session_id='', window_handle=''):
 def move_window(session_id='', window_handle=''):
     try:
         request_data = request.body.read()
-        x = json.loads(request_data).get('x')
-        y = json.loads(request_data).get('y')
+        x = json.loads(request_data.decode()).get('x')
+        y = json.loads(request_data.decode()).get('y')
 
         if window_handle == "current":
             window = "[active]"
@@ -774,7 +779,7 @@ def max_window(session_id='', window_handle=''):
 def run_autoit_app(session_id=''):
     try:
         request_data = request.body.read()
-        app2run = json.loads(request_data).get('url')
+        app2run = json.loads(request_data.decode()).get('url')
         #autoit.run(app2run)
         app.oAutoItX.Run(app2run)
         #if autoit._has_error():
@@ -793,11 +798,12 @@ def run_autoit_app(session_id=''):
 def upload_file(session_id=''):
     try:
         request_data = request.body.read()
-        b64data = json.loads(request_data).get('file')
+        b64data = json.loads(request_data.decode()).get('file')
         byteContent = base64.b64decode(b64data)
-        path = os.tempnam()
-        with open(path, 'wb') as f:
+        path = ""
+        with tempfile.NamedTemporaryFile(delete=False) as f:
             f.write(byteContent)
+            path = f.name
         extracted_files = unzip(path,os.path.dirname(path))        
     except:
         response.status = 400
@@ -827,7 +833,7 @@ def unzip(source_filename, dest_dir):
                 path = os.path.join(path, word)
             zf.extract(member, path)
             unzipped_file = os.path.join(dest_dir,member.filename)
-            print "Unzipped a file: %s" % unzipped_file
+            print("Unzipped a file: ",unzipped_file)
             files_in_zip.append(unzipped_file)
     return files_in_zip
 
@@ -837,10 +843,16 @@ def unsupported_command(error):
     return 'Unrecognized command, or AutoItDriverServer does not support/implement this: %s %s' % (request.method, request.path)
 
 def encode_value_4_wire(value):
-    return urllib.pathname2url(base64.b64encode(value))
+    try:
+        return urllib.parse.quote(base64.b64encode(value.encode("utf-8")))
+    except:
+        return urllib.quote(base64.b64encode(value.encode("utf-8")))
 
 def decode_value_from_wire(value):
-    return base64.b64decode(urllib.url2pathname(value))
+    try:
+        return base64.b64decode(urllib.parse.unquote(value)).decode("utf-8")
+    except:
+        return base64.b64decode(urllib.unquote(value)).decode("utf-8")
 
 if __name__ == '__main__':
     import argparse
@@ -863,7 +875,7 @@ if __name__ == '__main__':
         options_file = args.autoit_options_file
     else:
         options_file = os.path.join(os.path.curdir,'autoit_options.cfg')
-    config = ConfigParser.RawConfigParser()
+    config = configparser.RawConfigParser()
     config.read(options_file)
     app.caretCoordMode = config.get("AutoIt Options",'CaretCoordMode')
     app.expandEnvStrings = config.get("AutoIt Options",'ExpandEnvStrings')

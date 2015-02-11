@@ -1,11 +1,12 @@
+from __future__ import print_function
 from selenium import webdriver
 from selenium.webdriver import ActionChains
 import time
 
 driver = webdriver.Remote( command_executor='http://127.0.0.1:4723/wd/hub', desired_capabilities={'browserName':'AutoIt'})
-print "Desired Capabilities returned by server:\n"
-print driver.desired_capabilities
-print ""
+print("Desired Capabilities returned by server:\n")
+print(driver.desired_capabilities)
+print("")
 
 # demo adapted from AutoItX VBScript example that comes with AutoIt installation
 driver.get("notepad.exe")

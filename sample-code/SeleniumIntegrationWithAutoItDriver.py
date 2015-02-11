@@ -1,12 +1,13 @@
+from __future__ import print_function
 from selenium import webdriver
 from selenium.webdriver import ActionChains
 import time
 
 wd = webdriver.Firefox()
 ad = webdriver.Remote( command_executor='http://127.0.0.1:4723/wd/hub', desired_capabilities={'browserName':'AutoIt'})
-print "Desired Capabilities returned by server:\n"
-print ad.desired_capabilities
-print ""
+print("Desired Capabilities returned by server:\n")
+print(ad.desired_capabilities)
+print("")
 
 action1 = ActionChains(ad)
 
@@ -16,7 +17,7 @@ time.sleep(1)
 # check state that img is "unauthenticated" at start
 img_src = wd.find_element_by_id("downloadImg").get_attribute("src")
 if not img_src.endswith("/images/spacer.gif"):
-	print "HTTP demo test fail because test site not started with correct default unauthenticated state."
+	print("HTTP demo test fail because test site not started with correct default unauthenticated state.")
 
 # now test authentication
 wd.find_element_by_id("displayImage").click() # trigger the popup
@@ -28,7 +29,7 @@ time.sleep(5)
 # now check img is authenticated or changed
 img_src = wd.find_element_by_id("downloadImg").get_attribute("src")
 if img_src.endswith("/images/spacer.gif"):
-	print "HTTP demo failed, image didn't authenticate/change after logging in."
+	print("HTTP demo failed, image didn't authenticate/change after logging in.")
 
 ### file upload demo, also adapted from sample code of the test/target site ###
 wd.get("http://www.toolsqa.com/automation-practice-form")
