@@ -24,11 +24,11 @@ To get started, clone the repo:<br />
 Next, change into the 'autoitdriverserver_python' directory, and install dependencies:<br />
 `pip install -r partial_requirements.txt`
 
-The partial_requirements file doesn't necessarily specify all requirements. You'll need to have the Python win32com.client module (or Python for Windows extensions, win32 extensions for Python, etc.). That may already be installed with your Python installation. Or you may have to separately install that yourself. You can test first yourself to see if executing "import win32com.client" will return an exception or not in Python, with no errors meaning it's already installed. Alternatively, the server code was initially written to also work with https://github.com/jacexh/pyautoit as well (if you swap out the commented code with the current code).
+The partial_requirements file doesn't necessarily specify all requirements. You'll need to have the Python win32com.client module (or Python for Windows extensions, win32 extensions for Python, etc.). That may already be installed with your Python installation. If not, you can install from here for example: http://sourceforge.net/projects/pywin32. You can test first yourself to see if executing "import win32com.client" will return an exception or not in Python, with no errors meaning it's already installed. Alternatively, the server code was initially written to also work with https://github.com/jacexh/pyautoit as well (if you swap out the commented code with the current code).
 
 Additionally, you'll need to have AutoIt installed, or register the appropriate version of AutoItX DLL (x86 vs x64). When installing AutoIt or registering DLL, the version to register/use depends on the platform you're using with. For Python it would depend on whether you run the 32 or 64 bit version of Python not whether your OS is 32 or 64 bit.
 
-To launch a webdriver-compatible server, run:<br />
+To launch the webdriver-compatible AutoItDriverServer to use AutoIt via WebDriver client API, run (from 'autoitdriverserver_python' directory):<br />
 `python server.py` <br />
 
 For additional parameter info, append the `--help` parameter
